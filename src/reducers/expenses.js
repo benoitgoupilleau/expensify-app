@@ -1,7 +1,8 @@
 import {
   ADD_EXPENSE,
   REMOVE_EXPENSE,
-  EDIT_EXPENSE
+  EDIT_EXPENSE,
+  SET_EXPENSES
 } from '../actions/types';
 
 // Expense Reducer
@@ -26,6 +27,8 @@ const expensesReducer = (state = expensesReducerDefaultState, action) => {
           return expense;
         }
       });
+    case SET_EXPENSES:
+      return action.expenses;
     default:
       return state;
   }

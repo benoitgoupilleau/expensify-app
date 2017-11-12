@@ -4,7 +4,8 @@ import database from '../firebase/firebase';
 import {
   ADD_EXPENSE,
   REMOVE_EXPENSE,
-  EDIT_EXPENSE
+  EDIT_EXPENSE,
+  SET_EXPENSES
 } from './types';
 
 
@@ -39,3 +40,23 @@ export const editExpense = (id, updates) => ({
   id,
   updates
 });
+
+export const setExpenses = (expenses) => ({
+  type: SET_EXPENSES,
+  expenses
+});
+
+export const startSetExpenses = () => {
+  return (dispatch) => {
+    return database.ref('expenses').once('value').then((snapshot) => {
+      const expenses = [];
+      snapshot.forEach((element) => {
+        expenses.push({
+          id: element.key,
+          ...element.val()
+        });
+      });
+      dispatch(setExpenses(expenses));
+    });
+  };
+};
