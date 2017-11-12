@@ -1,4 +1,13 @@
-import { startAddExpense, addExpense, removeExpense, startRemoveExpense, editExpense, setExpenses, startSetExpenses } from '../../actions/expenses';
+import {
+  startAddExpense,
+  addExpense,
+  removeExpense,
+  startRemoveExpense,
+  editExpense,
+  startEditExpense,
+  setExpenses,
+  startSetExpenses
+} from '../../actions/expenses';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import database from '../../firebase/firebase';
@@ -30,12 +39,53 @@ test('should setup remove expense action object', () => {
   });
 });
 
+test('should remove expenses from firebase', (done) =>{
+  const store = createMockStore({});
+  const { id } = expenses[1];
+  store.dispatch(startRemoveExpense({ id })).then(() => {
+    const actions = store.getActions();
+    expect(actions[0]).toEqual({
+      type: REMOVE_EXPENSE,
+      id
+    });
+    return database.ref(`expenses/${id}`).once('value');
+  }).then((snapshot) => {
+    expect(snapshot.val()).toBeFalsy();
+    done();
+  });
+});
+
 test('should setup edit expense action object', () => {
   const action = editExpense('123abc', { note: 'New value' });
   expect(action).toEqual({
     type: EDIT_EXPENSE,
     id: '123abc',
     updates: { note: 'New value' }
+  });
+});
+
+test('should update expense on firebase', (done) => {
+  const store = createMockStore({});
+  const { id } = expenses[0];
+  const updates = {
+    description: 'Hello',
+    note: 'new note'
+  };
+  store.dispatch(startEditExpense(id, updates)).then(() => {
+    const actions = store.getActions();
+    expect(actions[0]).toEqual({
+      type: EDIT_EXPENSE,
+      id,
+      updates
+    });
+    return database.ref(`expenses/${id}`).once('value');
+  }).then((snapshot) => {
+    expect(snapshot.val()).toEqual({
+      ...updates,
+      amount: 195,
+      createdAt: 0
+    });
+    done();
   });
 });
 
@@ -112,21 +162,5 @@ test('should fetch the expenses from firebase', (done) => {
       expenses
     });
     done();
-  });
-});
-
-test('should remove expenses from firebase', (done) =>{
-  const store = createMockStore({});
-  const { id } = expenses[1];
-  store.dispatch(startRemoveExpense({ id })).then(() => {
-    const actions = store.getActions();
-    expect(actions[0]).toEqual({
-      type: REMOVE_EXPENSE,
-      id
-    });
-    database.ref(`expenses/${id}`).once('value').then((snapshot) => {
-      expect(snapshot.val()).toBe(null);
-      done();
-    });
   });
 });
