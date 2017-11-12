@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import database from '../firebase/firebase';
 
 import {
   ADD_EXPENSE,
@@ -8,16 +9,23 @@ import {
 
 
 // ADD EXPENSE
-export const addExpense = ({ description = '', note = '', amount = 0, createdAt = 0 } = {}) => ({
+export const addExpense = (expense) => ({
   type: ADD_EXPENSE,
-  expense: {
-    id: uuid(),
-    description,
-    note,
-    createdAt,
-    amount
-  }
+  expense
 });
+
+export const startAddExpense = (expenseData = {}) => {
+  return (dispatch) => {
+    const { description = '', note = '', amount = 0, createdAt = 0 } = expenseData;
+    const expense = { description, note, amount, createdAt };
+    return database.ref('expenses').push(expense).then((ref) => {
+      dispatch(addExpense({
+        id: ref.key,
+        ...expense
+      }));
+    });
+  };
+};
 
 // REMOVE EXPENSE
 export const removeExpense = ({ id } = {}) => ({

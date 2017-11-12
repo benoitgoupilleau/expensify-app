@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import ExpenseForm from './ExpenseForm';
-import { addExpense } from '../actions/expenses';
+import { startAddExpense } from '../actions/expenses';
 
 // class AddExpensePage extends React.Component {
 //   onSubmit = (expense) => {
@@ -23,17 +23,18 @@ import { addExpense } from '../actions/expenses';
 //   }
 // }
 
+
 export const AddExpensePage = (props) => ( // export for test
   <div>
     <h1>Add Expense</h1>
     <ExpenseForm
       buttonMessage="Add Expense"
       onSubmit={(expense) => {
-        props.addExpense(expense);
+        props.startAddExpense(expense);
         props.history.push('/');
       }}
     />
   </div>
 );
 
-export default connect(null, { addExpense })(AddExpensePage);
+export default connect(null, { startAddExpense })(AddExpensePage);
