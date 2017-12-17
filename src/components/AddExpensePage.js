@@ -31,7 +31,7 @@ export const AddExpensePage = (props) => ( // export for test
       buttonMessage="Add Expense"
       onSubmit={(expense) => {
         props.startAddExpense(expense);
-        props.history.push('/');
+        props.history.push('/dashboard');
       }}
     />
   </div>
