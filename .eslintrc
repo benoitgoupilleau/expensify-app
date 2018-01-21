@@ -23,6 +23,7 @@
         "react/jsx-filename-extension": [0, { "extensions": [".js", ".jsx"] }],
         "arrow-parens": [0, "as-needed", { "requireForBlockBody": true }],
         "react/no-did-mount-set-state":"warn",
-        "no-case-declarations": "off"
+        "no-case-declarations": "off",
+        "jsx-a11y/anchor-is-valid": "off",
     }
 }
